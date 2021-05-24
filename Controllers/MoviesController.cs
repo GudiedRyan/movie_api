@@ -33,16 +33,11 @@ namespace movie_api.Controllers
 		public async Task<ActionResult<Movie>> create([FromBody] Movie movie)
 		{
 			var newMovie = await _movieRepository.create(movie);
-			return CreatedAtAction(nameof(GetMovies), new { id = newMovie.Id }, newMovie);
+			return CreatedAtAction(nameof(GetMovies), newMovie);
 		}
 		[HttpPut("/api/movies/{id}")]
 		public async Task<ActionResult> update(int id, [FromBody] Movie movie)
 		{
-			if (id != movie.Id)
-			{
-				return BadRequest();
-			}
-
 			await _movieRepository.update(movie);
 
 			return Ok();
@@ -54,7 +49,7 @@ namespace movie_api.Controllers
 			if (movieToDelete == null)
 				return NotFound();
 
-			await _movieRepository.delete(movieToDelete.Id);
+			await _movieRepository.delete(id);
 			return Ok();
 		}
 
