@@ -14,7 +14,7 @@
         <td>{{post["description"]}}</td>
         <td>{{post["releaseYear"]}}</td>
         <td>
-          <button v-on:click="put">Edit</button>
+          <button v-on:click="edit">Edit</button>
           <button>Copy</button>
           <button v-on:click="del(post.id)">Delete</button>
         </td>
@@ -36,7 +36,22 @@
       <br>
       <button v-on:click="post">Submit</button> 
     </form>
-
+    <!-- Edit form -->
+    <form v-if="edit_form">
+      <label>Name:</label>
+      <input v-model="new_name" maxlength="50">
+      <br>
+      <br>
+      <label>Description:</label>
+      <input v-model="new_desc" maxlength="500">
+      <br>
+      <br>
+      <label>Release Year</label>
+      <input type="quantity" v-model="new_year" min="1890" max="2021">
+      <br>
+      <br>
+      <button v-on:click="put(Id)">Submit</button> 
+    </form>
   </div>
 </template>
 
@@ -98,11 +113,17 @@ export default {
       this.show_table = false;
       this.edit_form = true;
     },
-    put() {
-      axios.put(`http://localhost:5000/api/movies`)
+    put(Id, e) {
+      axios.put(`http://localhost:5000/api/movies/${Id}`, {name: this.new_name, description: this.new_desc, releaseYear: Number(this.new_year)})
       .then(response => {
-        this.posts = response.data
+        this.show_table = true
+        this.edit_form = false
+        this.new_name = null
+        this.new_desc = null
+        this.new_year = null
+        return response
       })
+      e.preventDefault();
     }
     }
   }
